@@ -1,0 +1,17 @@
+{
+  "name": "ps5_notify",
+  "version": "1.0.0",
+  "description": "Will notify when a ps5 is in stock",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node main.js"
+  },
+  "author": "Jade Westover",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.1",
+    "puppeteer": "^5.5.0"
+  }
+}
