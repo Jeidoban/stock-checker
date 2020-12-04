@@ -9,6 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);
+    console.log(__dirname + 'user_store')
     startup()
 })
 
@@ -22,7 +23,7 @@ const client = new Twitter({
 
 async function startup() {
     try {
-        browser = await puppeteer.launch({ headless: true, userDataDir: 'user_store', defaultViewport: { width: 1024, height: 768 } })
+        browser = await puppeteer.launch({ headless: true, userDataDir: __dirname + '/user_store', defaultViewport: { width: 1024, height: 768 } })
         for (const store of stores) {
             createPage(store)
         }
