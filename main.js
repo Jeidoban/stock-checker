@@ -7,19 +7,33 @@ const Twitter = require('twitter-lite');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}...`);
-    console.log(__dirname + 'user_store')
-    startup()
-})
-
-let browser
 const client = new Twitter({
     consumer_key: process.env.consumer_key,
     consumer_secret: process.env.consumer_secret,
     access_token_key: process.env.access_token_key,
     access_token_secret: process.env.access_token_secret
 });
+
+let browser
+
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}...`);
+    startup()
+})
+
+app.get('/send-test-tweet', (req, res) => {
+    client.post('statuses/update', {
+        status: `Test tweet!\n\nat: ${new Date().toUTCString()}`
+    })
+    .then(result => {
+        res.send("Tweet successful!")
+        console.log(result)
+    })
+    .catch(error => {
+        res.send("Tweet successful!")
+        console.log(error)
+    })      
+})
 
 async function startup() {
     try {
