@@ -1,52 +1,97 @@
 const puppeteer = require('puppeteer');
+const cheerio = require('cheerio');
+const stores = require('./data/stores.json')
 const express = require('express');
+const timeout = require('await-timeout');
+const Twitter = require('twitter-lite');
+
 const app = express();
-
-app.get('/', (req, res) => {
-  res.send('Hello from App Engine!');
-});
-
-// Listen to the App Engine-specified port, or 8080 otherwise
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}...`);
+    startup()
+    console.log(`Server listening on port ${PORT}...`);
+})
+
+let browser
+const client = new Twitter({
+    consumer_key: process.env.consumer_key,
+    consumer_secret: process.env.consumer_secret,
+    access_token_key: process.env.access_token_key,
+    access_token_secret: process.env.access_token_secret
 });
 
-// (async function() {
-//     const browser = await puppeteer.launch({ headless: true, /*executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',*/ userDataDir: 'data', defaultViewport: {width: 1024, height: 768}})
+async function startup() {
+    browser = await puppeteer.launch({ headless: true, userDataDir: 'user_store', defaultViewport: { width: 1024, height: 768 } })
+    for (const store of stores) {
+        createPage(store)
+    }
+}
 
-//     async function determineElementExistence(URL, selector) {
-//         let page = await browser.newPage()
-//         await page.goto(URL)
-//         let elem = await page.$(selector)
-//         await page.close()
-//         return elem !== null    
-//     }
-    
-//     async function runSonyDirect() {
-//         return await determineElementExistence(
-//             'https://direct.playstation.com/en-us/consoles/console/playstation5-console.3005816',
-//             'div.productHero-info button[data-product-code="3005816"]:not(.hide), div.productHero-info div.js-login-to-purchase:not(.hide)'
-//         )
-//     }
-    
-//     async function runSonyDirectController() {
-//         return await determineElementExistence(
-//             'https://direct.playstation.com/en-us/accessories/accessory/dualsense-wireless-controller.3005715',
-//             'div.productHero-info button[data-product-code="3005715"]:not(.hide), div.productHero-info div.js-login-to-purchase:not(.hide)'
-//         )
-//     }
-    
-//     const resultArr = await Promise.all([
-//         runSonyDirect(),
-//         runSonyDirectController()
-//     ])
+async function createPage(store) {
+    let page = await browser.newPage()
+    await page.goto(store.URL, {waitUntil: 'networkidle0'}) 
+    let previousHTML = await grabNewHtml()
+    let inStockTweetId = null
+    let nullTweetId = null
 
-//     for (const item of resultArr) {
-//         console.log("In stock: " + item)
-//     }
+    if (!previousHTML) {
+        console.log(`Closing ${store.name} due to null selector. This was the first attempt at grabbing site HTML`)
+        await page.close()
+        return
+    }
 
-//     browser.close()
-// })()
+    while (true) {
+        await timeout.set(store.refreshRate)
+        await page.reload({waitUntil: 'networkidle0'})
+        const newHTML = await grabNewHtml()
 
+        if (!newHTML) {
+            if (store.tweet.nullTweet) {
+                nullTweetId = await sendTweet(store.tweet.nullTweet, nullTweetId)
+                console.log(store.tweet.nullTweet)
+                await timeout.set(store.tweetTimeoutRate)
+            } else {
+                console.log(`Closing ${store.name} due to null selector`)
+                await page.close()
+                return
+            }
+        } else {
+            if (newHTML.localeCompare(previousHTML) !== 0) {
+                inStockTweetId = await sendTweet(store.tweet.inStock, inStockTweetId)
+                console.log(store.tweet.inStock)
+                await timeout.set(store.tweetTimeoutRate)
+            } else {
+                console.log(store.name + " unchaged as of " + new Date().toUTCString())
+            }
+        }
+    }
 
+    async function grabNewHtml() {
+        const html = await page.content()
+        const $ = cheerio.load(html)
+        return $(store.selector).html()
+    }
+
+    async function sendTweet(tweetText, tweetID) {
+        try {
+            let result = await client.post('statuses/update', {
+                status: tweetText
+            })
+            console.log(result)
+            return result.id_str
+        } catch (error) {
+            console.log(error)
+            try {
+                let result = await client.post(`statuses/update`, {
+                    status: `This still appears to be true: https://twitter.com/Ps5Checker/status/${tweetID}\n\nat: ${new Date().toUTCString()}`
+                })
+                console.log(result)
+                return tweetID
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
+}
+
+/*executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',*/
