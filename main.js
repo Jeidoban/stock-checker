@@ -8,8 +8,8 @@ const Twitter = require('twitter-lite');
 const app = express();
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-    startup()
     console.log(`Server listening on port ${PORT}...`);
+    startup()
 })
 
 let browser
@@ -21,9 +21,13 @@ const client = new Twitter({
 });
 
 async function startup() {
-    browser = await puppeteer.launch({ headless: true, userDataDir: 'user_store', defaultViewport: { width: 1024, height: 768 } })
-    for (const store of stores) {
-        createPage(store)
+    try {
+        browser = await puppeteer.launch({ headless: true, userDataDir: 'user_store', defaultViewport: { width: 1024, height: 768 } })
+        for (const store of stores) {
+            createPage(store)
+        }
+    } catch(error) {
+        console.log(error)
     }
 }
 

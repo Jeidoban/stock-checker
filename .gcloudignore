@@ -1,3 +1,4 @@
 node_modules
 .vscode
 extra.json
+user_store
