@@ -70,7 +70,7 @@ async function createPage(store) {
         try {
             await timeout.set(store.refreshRate)
             await page.reload({ waitUntil: 'networkidle0' })
-            const newHTML = await grabNewHtml()
+            let newHTML = await grabNewHtml()
 
             if (!newHTML) {
                 if (store.tweet.nullTweet) {
@@ -89,14 +89,19 @@ async function createPage(store) {
                 }
             } else {
                 if (newHTML.localeCompare(previousHTML) !== 0) {
-                    inStockTweetId = await sendTweet(store.tweet.inStock, inStockTweetId)
-                    console.log("OLD HTML:")
-                    console.log(previousHTML)
-                    console.log("NEW HTML:")
-                    console.log(newHTML)
-                    console.log("TWEET TEXT:")
-                    console.log(store.tweet.inStock)
-                    await timeout.set(store.tweetTimeoutRate)
+                    await page.reload({ waitUntil: 'networkidle0' })
+                    await timeout.set(1000)
+                    newHTML = await grabNewHtml()
+                    if (newHTML.localeCompare(previousHTML) !== 0) {
+                        inStockTweetId = await sendTweet(store.tweet.inStock, inStockTweetId)
+                        console.log("OLD HTML:")
+                        console.log(previousHTML)
+                        console.log("NEW HTML:")
+                        console.log(newHTML)
+                        console.log("TWEET TEXT:")
+                        console.log(store.tweet.inStock)
+                        await timeout.set(store.tweetTimeoutRate)
+                    }
                 } else {
                     console.log(store.name + " unchaged as of " + new Date().toUTCString())
                 }
