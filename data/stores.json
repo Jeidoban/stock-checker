@@ -9,16 +9,5 @@
             "inStock": "PS5 appears to be in stock on Playstation Direct:\n\nDisc: https://direct.playstation.com/en-us/consoles/console/playstation5-console.3005816\nDigital: https://direct.playstation.com/en-us/consoles/console/playstation5-digital-edition-console.3005817",
             "nullTweet": "There may be a Queue forming on Playstation Direct: https://direct.playstation.com/en-us/consoles/console/playstation5-console.3005816"
         }
-    },
-    {
-        "name": "Best Buy",
-        "URL": "https://www.bestbuy.com/site/sony-playstation-5-console/6426149.p?skuId=6426149",
-        "selector": ".fulfillment-add-to-cart-button",
-        "refreshRate": "5000",
-        "tweetTimeoutRate": "300000",
-        "tweet": {
-            "inStock": "PS5 appears to be in stock at Best Buy:\n\nDisc: https://www.bestbuy.com/site/sony-playstation-5-console/6426149.p?skuId=6426149\nDigital: https://www.bestbuy.com/site/sony-playstation-5-digital-edition-console/6430161.p?skuId=6430161",
-            "nullTweet": ""
-        }
     }
 ]

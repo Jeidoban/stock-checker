@@ -36,7 +36,7 @@ app.get('/send-test-tweet', (req, res) => {
 })
 
 async function startup() {
-    browser = await puppeteer.launch({ headless: false, userDataDir: __dirname + '/user_store', defaultViewport: { width: 1024, height: 768 } })
+    browser = await puppeteer.launch({ headless: true, userDataDir: __dirname + '/user_store', defaultViewport: { width: 1024, height: 768 } })
     for (const store of stores) {
         createPage(store)
     }
