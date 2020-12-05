@@ -89,19 +89,14 @@ async function createPage(store) {
                 }
             } else {
                 if (newHTML.localeCompare(previousHTML) !== 0) {
-                    await page.reload({ waitUntil: 'networkidle0' })
-                    await timeout.set(1000)
-                    newHTML = await grabNewHtml()
-                    if (newHTML.localeCompare(previousHTML) !== 0) {
-                        inStockTweetId = await sendTweet(store.tweet.inStock, inStockTweetId)
-                        console.log("OLD HTML:")
-                        console.log(previousHTML)
-                        console.log("NEW HTML:")
-                        console.log(newHTML)
-                        console.log("TWEET TEXT:")
-                        console.log(store.tweet.inStock)
-                        await timeout.set(store.tweetTimeoutRate)
-                    }
+                    inStockTweetId = await sendTweet(store.tweet.inStock, inStockTweetId)
+                    console.log("OLD HTML:")
+                    console.log(previousHTML)
+                    console.log("NEW HTML:")
+                    console.log(newHTML)
+                    console.log("TWEET TEXT:")
+                    console.log(store.tweet.inStock)
+                    await timeout.set(store.tweetTimeoutRate)
                 } else {
                     console.log(store.name + " unchaged as of " + new Date().toUTCString())
                 }
@@ -118,7 +113,19 @@ async function createPage(store) {
     async function grabNewHtml() {
         const html = await page.content()
         const $ = cheerio.load(html)
-        return $(store.selector).html()
+        let htmlString = ''
+        
+        for (let selector of store.selectors) {
+            const elem = $(selector)
+            elemHtml = $.html(elem)
+            if (elemHtml) {
+                htmlString += `${elemHtml}\n`
+            } else { 
+                return null
+            }
+        }
+
+        return htmlString
     }
 
     async function sendTweet(tweetText, tweetID) {
