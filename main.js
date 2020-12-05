@@ -114,7 +114,7 @@ async function createPage(store) {
         const html = await page.content()
         const $ = cheerio.load(html)
         let htmlString = ''
-        
+
         for (let selector of store.selectors) {
             const elem = $(selector)
             elemHtml = $.html(elem)
@@ -131,7 +131,7 @@ async function createPage(store) {
     async function sendTweet(tweetText, tweetID) {
         try {
             let result = await client.post('statuses/update', {
-                status: tweetText
+                status: `${tweetText}\n\nat: ${new Date().toUTCString()}`
             })
             console.log(result)
             return result.id_str
