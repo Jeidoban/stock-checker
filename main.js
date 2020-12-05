@@ -55,6 +55,8 @@ async function createPage(store) {
 
     if (!previousHTML) {
         console.log(`Closing ${store.name} due to null selector. This was the first attempt at grabbing site HTML`)
+        console.log("PAGE HTML:")
+        console.log(await page.content())
         await page.close()
         return
     }
@@ -67,16 +69,24 @@ async function createPage(store) {
         if (!newHTML) {
             if (store.tweet.nullTweet) {
                 nullTweetId = await sendTweet(store.tweet.nullTweet, nullTweetId)
+                console.log("PAGE HTML:")
+                console.log(await page.content())
+                console.log("NULL TWEET TEXT:")
                 console.log(store.tweet.nullTweet)
                 await timeout.set(store.tweetTimeoutRate)
             } else {
                 console.log(`Closing ${store.name} due to null selector`)
+                console.log("PAGE HTML:")
+                console.log(await page.content())
                 await page.close()
                 return
             }
         } else {
             if (newHTML.localeCompare(previousHTML) !== 0) {
                 inStockTweetId = await sendTweet(store.tweet.inStock, inStockTweetId)
+                console.log("PAGE HTML:")
+                console.log(await page.content())
+                console.log("TWEET TEXT:")
                 console.log(store.tweet.inStock)
                 await timeout.set(store.tweetTimeoutRate)
             } else {
