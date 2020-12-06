@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
-const stores = require('./data/stores.json')
+const stores = require('./data/stores')
 const express = require('express');
 const timeout = require('await-timeout');
 const Twitter = require('twitter-lite');
