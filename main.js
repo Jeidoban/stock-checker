@@ -4,17 +4,19 @@ const stores = require('./data/stores')
 const express = require('express');
 const timeout = require('await-timeout');
 const Twitter = require('twitter-lite');
+const args = require('yargs').argv;
 
 const app = express();
-const PORT = process.env.PORT || 8080;
 const client = new Twitter({
     consumer_key: process.env.consumer_key,
     consumer_secret: process.env.consumer_secret,
     access_token_key: process.env.access_token_key,
     access_token_secret: process.env.access_token_secret
 });
-
 let browser
+const storenumber = args.storenumber
+const userstore = args.userstore
+const PORT = process.env.PORT || args.port || 8080;
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);
@@ -36,9 +38,14 @@ app.get('/send-test-tweet', (req, res) => {
 })
 
 async function startup() {
-    browser = await puppeteer.launch({ headless: true, userDataDir: __dirname + '/user_store', defaultViewport: { width: 1024, height: 768 } })
-    for (const store of stores) {
-        createPage(store)
+    browser = await puppeteer.launch({ headless: true, userDataDir: __dirname + '/' + userstore || '/user_store', defaultViewport: { width: 1024, height: 768 }})
+
+    if (typeof storenumber === 'undefined') {
+        for (const store of stores) {
+            createPage(store)
+        }
+    } else {
+        createPage(stores[storenumber])
     }
 }
 
