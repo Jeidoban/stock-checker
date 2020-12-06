@@ -45,7 +45,7 @@ async function startup() {
 async function createPage(store) {
     try {
         var page = await browser.newPage()
-        await page.goto(store.URL, { waitUntil: 'networkidle0' })
+        await page.goto(store.URL, { waitUntil: store.pageWaitUntil, timeout: store.refreshTimeoutRate})
         var previousHTML = await grabNewHtml()
         var inStockTweetId = null
         var nullTweetId = null
@@ -69,7 +69,7 @@ async function createPage(store) {
     while (true) {
         try {
             await timeout.set(store.refreshRate)
-            await page.reload({ waitUntil: 'networkidle0' })
+            await page.reload({ waitUntil: store.pageWaitUntil, timeout: store.refreshTimeoutRate})
             let newHTML = await grabNewHtml()
 
             if (!newHTML) {
