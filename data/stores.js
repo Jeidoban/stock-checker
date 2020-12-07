@@ -44,5 +44,20 @@ module.exports = [
             "inStock": "PS5 might to be in stock at Best Buy:\n\nDisc: https://www.bestbuy.com/site/sony-playstation-5-console/6426149.p?skuId=6426149\nDigital: https://www.bestbuy.com/site/sony-playstation-5-digital-edition-console/6430161.p?skuId=6430161",
             "nullTweet": ""
         }
+    },
+    {
+        "name": "Localhost",
+        "URL": "http://localhost:3000",
+        "selectors": [
+            "body > div > h1"
+        ],
+        "refreshRate": "5000",
+        "tweetTimeoutRate": "10000",
+        "pageWaitUntil": "networkidle0",
+        "refreshTimeoutRate": 600000,
+        "tweet": {
+            "inStock": "PS5 appears to be in stock on Playstation Direct:\n\nDisc: https://direct.playstation.com/en-us/consoles/console/playstation5-console.3005816\nDigital: https://direct.playstation.com/en-us/consoles/console/playstation5-digital-edition-console.3005817",
+            "nullTweet": ""
+        }
     }
 ]
