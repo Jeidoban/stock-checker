@@ -38,7 +38,7 @@ app.get('/send-test-tweet', (req, res) => {
 })
 
 async function startup() {
-    browser = await puppeteer.launch({ headless: true, userDataDir: __dirname + '/' + userstore || '/user_store', defaultViewport: { width: 1024, height: 768 }})
+    browser = await puppeteer.launch({ headless: true, userDataDir: __dirname + '/' + userstore || '/user_store', defaultViewport: { width: 1024, height: 768 } })
 
     if (typeof storenumber === 'undefined') {
         for (const store of stores) {
@@ -52,7 +52,7 @@ async function startup() {
 async function createPage(store) {
     try {
         var page = await browser.newPage()
-        await page.goto(store.URL, { waitUntil: store.pageWaitUntil, timeout: store.refreshTimeoutRate})
+        await page.goto(store.URL, { waitUntil: store.pageWaitUntil, timeout: store.refreshTimeoutRate })
         var previousHTML = await grabNewHtml()
         var inStockTweetId = null
         var nullTweetId = null
@@ -76,23 +76,27 @@ async function createPage(store) {
     while (true) {
         try {
             await timeout.set(store.refreshRate)
-            await page.reload({ waitUntil: store.pageWaitUntil, timeout: store.refreshTimeoutRate})
+            await page.reload({ waitUntil: store.pageWaitUntil, timeout: store.refreshTimeoutRate })
             let newHTML = await grabNewHtml()
 
             if (!newHTML) {
-                if (store.tweet.nullTweet) {
-                    nullTweetId = await sendTweet(store.tweet.nullTweet, nullTweetId)
-                    console.log("PAGE HTML:")
-                    console.log(await page.content())
-                    console.log("NULL TWEET TEXT:")
-                    console.log(store.tweet.nullTweet)
-                    await timeout.set(store.tweetTimeoutRate)
-                } else {
-                    console.log(`Closing ${store.name} due to null selector`)
-                    console.log("PAGE HTML:")
-                    console.log(await page.content())
-                    await page.close()
-                    return
+                if (await page.content() !== '<html><head></head><body></body></html>') {
+                    if (store.tweet.nullTweet) {
+                        nullTweetId = await sendTweet(store.tweet.nullTweet, nullTweetId)
+                        console.log("PAGE HTML:")
+                        console.log(await page.content())
+                        console.log("NULL TWEET TEXT:")
+                        console.log(store.tweet.nullTweet)
+                        await timeout.set(store.tweetTimeoutRate)
+                    } else {
+                        console.log(`Closing ${store.name} due to null selector`)
+                        console.log("PAGE HTML:")
+                        console.log(await page.content())
+                        await page.close()
+                        console.log('Creating new instance of ' + store.name)
+                        createPage(store)
+                        return
+                    }
                 }
             } else {
                 if (newHTML.localeCompare(previousHTML) !== 0) {
@@ -127,7 +131,7 @@ async function createPage(store) {
             elemHtml = $.html(elem)
             if (elemHtml) {
                 htmlString += `${elemHtml}\n`
-            } else { 
+            } else {
                 return null
             }
         }
