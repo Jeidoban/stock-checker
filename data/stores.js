@@ -21,8 +21,8 @@ module.exports = [
         "selectors": [
             "#availability > span"
         ],
-        "refreshRate": "5000",
-        "tweetTimeoutRate": "180000",
+        "refreshRate": 5000,
+        "tweetTimeoutRate": 1800000,
         "pageWaitUntil": "domcontentloaded",
         "refreshTimeoutRate": 600000,
         "tweet": {
@@ -36,8 +36,8 @@ module.exports = [
         "selectors": [
             ".fulfillment-add-to-cart-button"
         ],
-        "refreshRate": "2000",
-        "tweetTimeoutRate": "300000",
+        "refreshRate": 2000,
+        "tweetTimeoutRate": 600000,
         "pageWaitUntil": "domcontentloaded",
         "refreshTimeoutRate": 600000,
         "tweet": {
@@ -51,8 +51,8 @@ module.exports = [
         "selectors": [
             "body > div > h1"
         ],
-        "refreshRate": "5000",
-        "tweetTimeoutRate": "10000",
+        "refreshRate": 5000,
+        "tweetTimeoutRate": 10000,
         "pageWaitUntil": "networkidle0",
         "refreshTimeoutRate": 600000,
         "tweet": {
