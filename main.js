@@ -15,7 +15,7 @@ const client = new Twitter({
 });
 let browser
 const storenumber = args.storenumber
-const userstore = args.userstore
+//const userstore = args.userstore
 const PORT = process.env.PORT || args.port || 8080;
 
 app.listen(PORT, () => {
@@ -38,7 +38,7 @@ app.get('/send-test-tweet', (req, res) => {
 })
 
 async function startup() {
-    browser = await puppeteer.launch({ headless: true, userDataDir: __dirname + '/' + userstore || '/user_store', defaultViewport: { width: 1024, height: 768 } })
+    browser = await puppeteer.launch({ headless: true, /*userDataDir: __dirname + '/' + userstore || '/user_store',*/ defaultViewport: { width: 1024, height: 768 } })
 
     if (typeof storenumber === 'undefined') {
         for (const store of stores) {
@@ -76,7 +76,14 @@ async function createPage(store) {
     while (true) {
         try {
             await timeout.set(store.refreshRate)
-            await page.reload({ waitUntil: store.pageWaitUntil, timeout: store.refreshTimeoutRate })
+            if (store.incognito) {
+                const context = await browser.createIncognitoBrowserContext()
+                page = await context.newPage()
+                await page.goto(store.URL, { waitUntil: store.pageWaitUntil, timeout: store.refreshTimeoutRate })
+            } else {
+                await page.reload({ waitUntil: store.pageWaitUntil, timeout: store.refreshTimeoutRate })
+            }
+
             let newHTML = await grabNewHtml()
 
             if (!newHTML) {
@@ -118,6 +125,14 @@ async function createPage(store) {
             console.log('Creating new instance of ' + store.name)
             createPage(store)
             return
+        }
+    }
+
+    async function createNewContext() {
+        if (store.incognito) {
+            const context = await browser.createIncognitoBrowserContext()
+            page = await context.newPage()
+            await page.goto(store.URL, { waitUntil: store.pageWaitUntil, timeout: store.refreshTimeoutRate })
         }
     }
 

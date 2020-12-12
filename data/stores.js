@@ -6,6 +6,7 @@ module.exports = [
             "body > div.root.responsivegrid > div > div.heropdp.background-white.aem-GridColumn.aem-GridColumn--default--12 > producthero-component > div > div > div.productHero-desc.col-lg-6.order-lg-2 > producthero-info > div > div.button-placeholder > div.out-stock-wrpr.js-login-to-purchase",
             "body > div.root.responsivegrid > div > div.heropdp.background-white.aem-GridColumn.aem-GridColumn--default--12 > producthero-component > div > div > div.productHero-desc.col-lg-6.order-lg-2 > producthero-info > div > div.button-placeholder > button"
         ],
+        "incognito": true,
         "refreshRate": 5000,
         "tweetTimeoutRate": 600000,
         "pageWaitUntil": "networkidle0",
@@ -21,6 +22,7 @@ module.exports = [
         "selectors": [
             "#availability > span"
         ],
+        "incognito": false,
         "refreshRate": 5000,
         "tweetTimeoutRate": 1800000,
         "pageWaitUntil": "domcontentloaded",
@@ -36,6 +38,7 @@ module.exports = [
         "selectors": [
             ".fulfillment-add-to-cart-button"
         ],
+        "incognito": false,
         "refreshRate": 2000,
         "tweetTimeoutRate": 600000,
         "pageWaitUntil": "domcontentloaded",
@@ -51,6 +54,7 @@ module.exports = [
         "selectors": [
             "body > div > h1"
         ],
+        "incognito": false,
         "refreshRate": 5000,
         "tweetTimeoutRate": 10000,
         "pageWaitUntil": "networkidle0",
